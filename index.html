@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Automatas II</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<style>
+    .nav-item{
+        margin: 0 0.3em;
+    }
+</style>
+    <body>
+
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div style="margin-left: 1em" class="nav-item active">
+                    <a href="/" class="nav-link nav-item active navbar-brand">Automatas II</a>
+                </div>
+                <div class="nav-item active">
+                    <a href="/index.html" class="nav-link nav-item active navbar-brand">Analizador semántico</a>
+                </div>
+                <div class="nav-item active">
+                    <a href="/sintactico.html" class="nav-link nav-item active navbar-brand">Analizador sintáctico</a>
+                </div>
+                <div class="nav-item active">
+                    <a href="/lexico.html" class="nav-link nav-item active navbar-brand">Analizador Léxico</a>
+                </div>
+            </nav>
+        </div>
+
+        <div class="container">
+            <h1>Analizador Semántico</h1>
+        </div>
+
+        <div style="margin-top: 1em" class="container">
+            <form id="sentimentForm">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="entrada">Texto a analizar:</label>
+                        <textarea id="entrada" name="entrada" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <button id="btnAnalizar" class="btn btn-primary">Analizar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resultado del análisis -->
+        <div class="container">
+            <div id="resultadoAnalisis" style="margin-top: 1em"></div>
+        </div>
+
+        <script>
+            document.getElementById("btnAnalizar").addEventListener("click", function(event) {
+                // Prevenir el envío predeterminado del formulario
+                event.preventDefault();
+
+                console.log("Formulario enviado");  // Verificar si se envía el formulario correctamente
+
+                // Obtener el texto del textarea
+                var texto = document.getElementById("entrada").value;
+
+                // Realizar la petición al servidor para analizar el sentimiento
+                fetch("/analizar_sentimiento", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ inputText: texto })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.calificacion_comentario); // Agrega esta línea
+
+                    // Mostrar el resultado del análisis en el elemento resultadoAnalisis
+                    var resultadoElement = document.getElementById("resultadoAnalisis");
+
+                    // Modificar para mostrar el resultado y la calificación
+                    resultadoElement.innerHTML = `<strong>Resultado del Análisis:</strong> ${data.result} ${data.calificacion_comentario}`;
+
+                    // Cambiar el color de fondo según la calificación del comentario
+                    if (data.calificacion_comentario === "Positivo") {
+                        resultadoElement.style.backgroundColor = "green";
+                    } else if (data.calificacion_comentario === "Negativo") {
+                        resultadoElement.style.backgroundColor = "red";
+                    } else if (data.calificacion_comentario === "Regular") {
+                        resultadoElement.style.backgroundColor = "yellow";
+                    }
+                })
+                .catch(error => console.error("Error al analizar el sentimiento:", error));
+            });
+        </script>
+    </body>
+</html>

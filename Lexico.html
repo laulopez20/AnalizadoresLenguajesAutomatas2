@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        #output {
+            white-space: pre-wrap;
+        }
+        .error {
+            color: rebeccapurple; /* Color morado */
+            font-weight: bold;
+            text-decoration: underline red; /* Agregado el color de subrayado en rojo */
+        }
+        .black {
+            color: black;
+        }
+    </style>
+    <title>Analizador Léxico</title>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">Automatas II</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Semantico.html">Analizador Semántico</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Sintactico.html">Analizador Sintáctico</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="lexico.html">Analizador Léxico</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h1>Analizador Léxico</h1>
+
+    <div class="row g-3 align-items-center">
+        <div class="col-auto">
+            <label for="input">Ingrese la expresión/oracion:</label>
+        </div>
+        <div class="col-auto">
+            <textarea id="input" oninput="analizar()" rows="4" cols="50"></textarea>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <label for="result">Resultado analizado:</label>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function analizar() {
+            const inputTextArea = document.getElementById('input');
+            const resultParagraph = document.getElementById('result');
+            const inputText = inputTextArea.value;
+
+            let resultHTML = '';
+
+            for (let i = 0; i < inputText.length; i++) {
+                const currentChar = inputText[i];
+                const nextChar = inputText[i + 1];
+
+                const specialCases = ['--', '++', '**', '//', '- -', '+ +', '* *', '/ /'];
+
+                const currentPair = currentChar + (nextChar ? nextChar : '');
+
+                if (specialCases.includes(currentPair)) {
+                    resultHTML += '<span class="error">' + currentPair + '</span>';
+                    i++; // Skip the next character
+                } else if (/[0-9+\-*/]/.test(currentChar)) {
+                    resultHTML += '<span class="black">' + currentChar + '</span>';
+                } else {
+                    resultHTML += '<span class="error">' + currentChar + '</span>';
+                }
+            }
+
+            resultParagraph.innerHTML = resultHTML;
+        }
+    </script>
+
+</body>
+</html>
